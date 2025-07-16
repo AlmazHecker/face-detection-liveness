@@ -41,12 +41,14 @@ def check_icao(face_box, landmarks, frame_shape):
     sharp = check_sharpness(frame[ymin:ymax, xmin:xmax])
 
     conditions = [
-        0.7 <= head_ratio <= 0.8,
+        # 0.7 <= head_ratio <= 0.8,
+        0.6 <= head_ratio <= 0.7,
         centered_x_val < 0.1 * w,
         centered_y_val < 0.1 * h,
-        0.6 <= eyes_rel <= 0.7,
+        # 0.6 <= eyes_rel <= 0.7,
+        0.35 <= eyes_rel <= 0.5,
         angle < 5,
-        sharp > 100
+        sharp > 50
     ]
 
     return all(conditions), {
@@ -58,7 +60,8 @@ def check_icao(face_box, landmarks, frame_shape):
         "sharpness": sharp
     }
 
-cap = cv2.VideoCapture('http://192.168.1.11:8080/video')
+# cap = cv2.VideoCapture('http://192.168.1.11:8080/video')
+cap = cv2.VideoCapture(0)
 
 while True:
     ret, frame = cap.read()
