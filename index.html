@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICAO Video Capture (Non-Mirrored)</title>
+  <style>
+    video {
+      display: none;
+    }
+    canvas {
+      width: 640px;
+      height: 480px;
+      border: 2px solid #000;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="640" height="480"></canvas>
+  <video id="video" autoplay playsinline muted></video>
+
+  <script>
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    const constraints = {
+      video: {
+        width: { min: 640, ideal: 1280 },
+        height: { min: 480, ideal: 960 },
+        aspectRatio: { ideal: 4 / 3 },
+        frameRate: { ideal: 30 },
+        facingMode: "user"
+      }
+    };
+
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then((stream) => {
+        video.srcObject = stream;
+        video.onloadedmetadata = () => {
+          video.play();
+          draw();
+        };
+      })
+      .catch((err) => {
+        console.error("Camera access error:", err);
+      });
+
+    function draw() {
+      ctx.save();
+      ctx.scale(-1, 1); // horizontal flip
+      ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+      ctx.restore();
+      requestAnimationFrame(draw);
+    }
+  </script>
+</body>
+</html>
